@@ -8,6 +8,7 @@ import { userDB } from "../Models/user.model.mjs";
 tg.on("callback_query", async callback => {
     try {
         const { chat_id } = await getChat(callback.from.id)
+        if (!chat_id || callback.message.chat.type != "private") return
         const query = callback.data
         const message_id = callback.message.message_id
         const params = query.split(" ")

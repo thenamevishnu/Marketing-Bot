@@ -46,6 +46,9 @@ tg.onText(/\/start(?: (.+))?$/, async (message, match) => {
             await tg.sendMessage(chat_id, text, {
                 parse_mode: "HTML"
             })
+            await tg.sendMessage(chat_id, `<i>🎁 Join chat @${env.CHANNEL_USERNAME} to get 5 coin as joining bonus ( If you leave the chat we will deduct joining bonus )</i>`, {
+                parse_mode: "HTML"
+            })
         }
         await tg.sendMessage(chat_id, `<i>🔥 Free Telegram Members</i>`, {
             parse_mode: "HTML",
@@ -59,9 +62,17 @@ tg.onText(/\/start(?: (.+))?$/, async (message, match) => {
     }
 })
 
+tg.onText(/\/stat/, async message => {
+    return await tg.sendMessage(message.chat.id, `<i>💹 Total Messages: ${message.message_id + 1}</i>`, {
+        parse_mode: "HTML",
+        reply_to_message_id: message.message_id
+    })
+})
+
 tg.onText(/🪙 Coins$/, async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         const user = await userDB.findOne({ _id: chat_id })
         const balance = user.balance
         return await tg.sendMessage(chat_id, `<i>🪙 You have: ${balance} coins</i>`, {
@@ -74,7 +85,8 @@ tg.onText(/🪙 Coins$/, async message => {
 
 tg.onText(/👛 Refer$/, async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         const user = await userDB.findOne({ _id: chat_id })
         const refId = user.refId
         const invites = user.invites
@@ -88,7 +100,8 @@ tg.onText(/👛 Refer$/, async message => {
 
 tg.onText(/➕ Add Chat \/ Channel$/, async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         answerCallback[chat_id] = "add_username"
         return await tg.sendMessage(chat_id, `<i>🚁 Enter username of your chat / channel</i>`, {
             parse_mode: "HTML",
@@ -104,7 +117,8 @@ tg.onText(/➕ Add Chat \/ Channel$/, async message => {
 
 tg.onText(/✅ My Lists$/, async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         const list = await chatDB.find({ user: chat_id })
         let text = `<i>📃 List of chat / channels</i>`
         const key = list.map(item => {
@@ -127,7 +141,8 @@ tg.onText(/✅ My Lists$/, async message => {
 
 tg.onText(/👆 Join Chat \/ Channel$/, async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         const usersWithBalanceZero = await userDB.find({ balance: { $lte: 0 } }, { _id: 1 })
         const ids = usersWithBalanceZero.map(item => item._id)
         if (usersWithBalanceZero.length > 0) {
@@ -183,7 +198,8 @@ tg.onText(/👆 Join Chat \/ Channel$/, async message => {
 
 tg.onText(/\/help$/, async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         const text = `<i><b>📌 Adding Your Chat/Channel: </b>Users can easily add their Telegram chat or channel by clicking on the <b>➕ "Add Chat/Channel"</b> button. To join chats or channels, simply click on <b>👆 "Join Chat/Channel."</b> Upon joining, you will receive 1 coin, where 1 coin equals 1 member for your chat or channel.
 
 <b>💼 Managing Your Chats/Channels: </b>Navigate to ✅ "My Lists" to effectively manage your chat or channel status. Here, you can switch the status between <b>✅ "Running"</b> and <b>❌ "Stopped."</b>

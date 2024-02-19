@@ -5,7 +5,8 @@ import { env } from "../env.mjs";
 
 tg.on("message", async message => {
     try {
-        const { chat_id } = await getChat(message.chat.id)
+        const { chat_id, type } = await getChat(message.chat.id)
+        if (!chat_id || type != "private") return
         const store = answerStore[chat_id]
         if (!store) {
             answerStore[chat_id] = {}

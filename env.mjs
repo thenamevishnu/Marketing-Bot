@@ -8,5 +8,7 @@ export const env = {
     SERVER: process.env.SERVER,
     ADMIN_ID: process.env.ADMIN_ID,
     BOT_NAME: process.env.BOT_NAME,
-    BOT_ID: process.env.BOT_ID
+    BOT_ID: process.env.BOT_ID,
+    CHANNEL_ID: process.env.CHANNEL_ID,
+    CHANNEL_USERNAME: process.env.CHANNEL_USERNAME
 }

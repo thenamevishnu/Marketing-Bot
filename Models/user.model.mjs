@@ -35,6 +35,16 @@ const user = new Schema({
         type: Number,
         default: 0
     },
+    joining_bonus_received: {
+        times: {
+            type: Number,
+            default: 0
+        },
+        received: {
+            type: Boolean,
+            default: false
+        }
+    },
     deposit: {
         type: Number,
         default: 0
